@@ -1,0 +1,28 @@
+#main-container {
+    width: 330px;
+    margin: auto;
+}
+
+h1{
+    font-family: Helvetica, sans-serif;
+    font-size: 40px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.cell_board {
+    height: 100px;
+    border: 2px solid;
+    padding-top: 20px;
+    font-family: sans-serif;
+    font-size: 35px;
+    text-align: center;
+}
+
+.menu {
+    margin-top: 20px;
+}
+
+p {
+    font-size: 22px;
+}
