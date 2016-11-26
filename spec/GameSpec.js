@@ -1,81 +1,6 @@
 (function () {
     "use strict";
 
-    function Game(first, second) {
-        this.first = first;
-        this.second = second;
-
-        this.field = [
-            ["", "", ""],
-            ["", "", ""],
-            ["", "", ""]
-        ];
-    }
-
-    Game.prototype.update = function () {
-        var game = this;
-
-        game.first.makeTurn(function (row, col, sign) {
-            if (game.getCell(row, col) !== "") {
-                throw new Error("This cell is occupied. Try again!");
-            }
-
-            game.field[row][col] = sign;
-
-            game.swap();
-        });
-    };
-
-    Game.prototype.getCell = function (row, col) {
-        return this.field[row][col];
-    };
-
-    Game.prototype.swap = function () {
-        var temp = this.first;
-        this.first = this.second;
-        this.second = temp;
-    };
-
-    Game.prototype.winnerByCol = function (col, sign) {
-        return this.getCell(0, col) === sign &&
-            this.getCell(1, col) === sign &&
-            this.getCell(2, col) === sign;
-    };
-
-    Game.prototype.winnerByRow = function (row, sign) {
-        return this.getCell(row, 0) === sign &&
-            this.getCell(row, 1) === sign &&
-            this.getCell(row, 2) === sign;
-    };
-
-    Game.prototype.winner = function () {
-        if (this.winnerByCol(0, "X") ||
-            this.winnerByCol(1, "X") ||
-            this.winnerByCol(2, "X")) {
-            return "X";
-        }
-
-        if (this.winnerByCol(0, "O") ||
-            this.winnerByCol(1, "O") ||
-            this.winnerByCol(2, "O")) {
-            return "O";
-        }
-
-        if (this.winnerByRow(0, "X") ||
-            this.winnerByRow(1, "X") ||
-            this.winnerByRow(2, "X")) {
-            return "X";
-        }
-
-        if (this.winnerByRow(0, "O") ||
-            this.winnerByRow(1, "O") ||
-            this.winnerByRow(2, "O")) {
-            return "O";
-        }
-
-        return "";
-    };
-
     describe("Game", function () {
         var playerX, playerO, game;
 
@@ -136,23 +61,11 @@
         function columnWinnerXScenario(col) {
             expect(game.winner()).toEqual("");
 
-            playerX.futureTurn = [0, col];
-            game.update();
-            expect(game.winner()).toEqual("");
-
-            playerO.futureTurn = [0, (col + 1) % 3];
-            game.update();
-
-            playerX.futureTurn = [1, col];
-            game.update();
-            expect(game.winner()).toEqual("");
-
-            playerO.futureTurn = [1, (col + 1) % 3];
-            game.update();
-
-            playerX.futureTurn = [2, col];
-            game.update();
-            expect(game.winner()).toEqual("X");
+            turn(playerX, [0, col], "");
+            turn(playerO, [0, (col + 1) % 3], "");
+            turn(playerX, [1, col], "");
+            turn(playerO, [1, (col + 1) % 3], "");
+            turn(playerX, [2, col], "X");
         }
 
         it("is a win for player X when first column is occupied by X", function () {
@@ -170,29 +83,12 @@
         function columnWinnerOScenario(col) {
             expect(game.winner()).toEqual("");
 
-            playerX.futureTurn = [0, (col + 1) % 3];
-            game.update();
-            expect(game.winner()).toEqual("");
-
-            playerO.futureTurn = [0, col];
-            game.update();
-            expect(game.winner()).toEqual("");
-
-            playerX.futureTurn = [0, (col + 2) % 3];
-            game.update();
-            expect(game.winner()).toEqual("");
-
-            playerO.futureTurn = [1, col];
-            game.update();
-            expect(game.winner()).toEqual("");
-
-            playerX.futureTurn = [2, (col + 1) % 3];
-            game.update();
-            expect(game.winner()).toEqual("");
-
-            playerO.futureTurn = [2, col];
-            game.update();
-            expect(game.winner()).toEqual("O");
+            turn(playerX, [0, (col + 1) % 3], "");
+            turn(playerO, [0, col], "");
+            turn(playerX, [0, (col + 2) % 3], "");
+            turn(playerO, [1, col], "");
+            turn(playerX, [2, (col + 1) % 3], "");
+            turn(playerO, [2, col], "O");
         }
 
         it("is a win for player O when first column is occupied by O", function () {
@@ -210,25 +106,11 @@
         function rowWinnerXScenario(row) {
             expect(game.winner()).toEqual("");
 
-            playerX.futureTurn = [row, 0];
-            game.update();
-            expect(game.winner()).toEqual("");
-
-            playerO.futureTurn = [(row + 1) % 3, 0];
-            game.update();
-            expect(game.winner()).toEqual("");
-
-            playerX.futureTurn = [row, 1];
-            game.update();
-            expect(game.winner()).toEqual("");
-
-            playerO.futureTurn = [(row + 2) % 3, 0];
-            game.update();
-            expect(game.winner()).toEqual("");
-
-            playerX.futureTurn = [row, 2];
-            game.update();
-            expect(game.winner()).toEqual("X");
+            turn(playerX, [row, 0], "");
+            turn(playerO, [(row + 1) % 3, 0], "");
+            turn(playerX, [row, 1], "");
+            turn(playerO, [(row + 2) % 3, 0], "");
+            turn(playerX, [row, 2], "X");
         }
 
         it("is a win for player X when first row is occupied by X", function () {
@@ -246,29 +128,12 @@
         function rowWinnerOScenario(row) {
             expect(game.winner()).toEqual("");
 
-            playerX.futureTurn = [(row + 1) % 3, 0];
-            game.update();
-            expect(game.winner()).toEqual("");
-
-            playerO.futureTurn = [row, 0];
-            game.update();
-            expect(game.winner()).toEqual("");
-
-            playerX.futureTurn = [(row + 1) % 3, 1];
-            game.update();
-            expect(game.winner()).toEqual("");
-
-            playerO.futureTurn = [row, 1];
-            game.update();
-            expect(game.winner()).toEqual("");
-
-            playerX.futureTurn = [(row + 2) % 3, 0];
-            game.update();
-            expect(game.winner()).toEqual("");
-
-            playerO.futureTurn = [row, 2];
-            game.update();
-            expect(game.winner()).toEqual("O");
+            turn(playerX, [(row + 1) % 3, 0], "");
+            turn(playerO, [row, 0], "");
+            turn(playerX, [(row + 1) % 3, 1], "");
+            turn(playerO, [row, 1], "");
+            turn(playerX, [(row + 2) % 3, 0], "");
+            turn(playerO, [row, 2], "O");
         }
 
         it("is a win for player O when first row is occupied by O", function () {
@@ -282,6 +147,46 @@
         it("is a win for player O when third row is occupied by O", function () {
             rowWinnerOScenario(2);
         });
+
+        it("is a win for player X when main diagonal is occupied by X", function () {
+            turn(playerX, [0, 0], "");
+            turn(playerO, [1, 0], "");
+            turn(playerX, [1, 1], "");
+            turn(playerO, [2, 0], "");
+            turn(playerX, [2, 2], "X");
+        });
+
+        it("is a win for player O when main diagonal is occupied by O", function () {
+            turn(playerX, [1, 0], "");
+            turn(playerO, [0, 0], "");
+            turn(playerX, [2, 0], "");
+            turn(playerO, [1, 1], "");
+            turn(playerX, [2, 1], "");
+            turn(playerO, [2, 2], "O");
+        });
+
+        it("is a win for player X when back diagonal is occupied by X", function () {
+            turn(playerX, [0, 2], "");
+            turn(playerO, [0, 0], "");
+            turn(playerX, [1, 1], "");
+            turn(playerO, [2, 1], "");
+            turn(playerX, [2, 0], "X");
+        });
+
+        it("is a win for player O when back diagonal is occupied by O", function () {
+            turn(playerX, [0, 0], "");
+            turn(playerO, [0, 2], "");
+            turn(playerX, [1, 0], "");
+            turn(playerO, [1, 1], "");
+            turn(playerX, [2, 1], "");
+            turn(playerO, [2, 0], "O");
+        })
+
+        function turn(player, turn, expectedWinner) {
+            player.futureTurn = turn;
+            game.update();
+            expect(game.winner()).toEqual(expectedWinner);
+        }
     });
 
     function FakePlayer(sign) {
@@ -292,4 +197,8 @@
     FakePlayer.prototype.makeTurn = function (callback) {
         callback(this.futureTurn[0], this.futureTurn[1], this.sign);
     };
+
+    FakePlayer.prototype.getSign = function () {
+        return this.sign;
+    }
 })();
