@@ -16,9 +16,11 @@ window.Game = (function () {
         var game = this;
 
         game.first.makeTurn(function (row, col, sign) {
-            if (game.getCell(row, col) !== "") {
+            if (game.getCell(row, col) !== "")
                 throw new Error("This cell is occupied. Try again!");
-            }
+
+            if (game.winner() !== "")
+                throw new Error("The game is over! You can't make a turn.");
 
             game.field[row][col] = sign;
 

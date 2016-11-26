@@ -1,39 +1,32 @@
-var turnCallback = function () {
-};
-
-function Player(sign) {
+function Player(main, sign) {
+    this.main = main;
     this.sign = sign;
 }
 
 Player.prototype.makeTurn = function (callback) {
-    var me = this;
-    turnCallback = function (row, col) {
-        callback(row, col, me.getSign());
-    };
+    callback(this.main.clickedRow, this.main.clickedCol, this.sign);
 };
 
 Player.prototype.getSign = function () {
     return this.sign;
 };
 
-var player = new Player("X");
-var computer = new Player("O");
-var game = new Game(player, computer);
+function Main() {
+    var main = this;
 
-$(".cell_board").click(function () {
-    var $cell = $(this);
+    main.player = new Player(main, "X");
+    main.computer = new Player(main, "O");
+    main.game = new Game(main.player, main.computer);
 
-    var row = $cell.attr("row");
-    var col = $cell.attr("col");
+    $(".cell_board").click(function () {
+        main.clickedRow = $(this).attr("row");
+        main.clickedCol = $(this).attr("col");
+        main.game.update();
+        $(this).text(main.game.getCell(main.clickedRow, main.clickedCol));
 
-    turnCallback(row, col);
-
-    $cell.text(game.getCell(row, col));
-
-    if (game.winner() !== "")
-        alert("Winner: " + game.winner());
-
-    game.update();
-});
-
-game.update();
+        if (main.game.winner() === "X")
+            $("#player_won_alert").removeClass("hidden");
+        else if (main.game.winner() === "O")
+            $("#computer_won_alert").removeClass("hidden");
+    });
+}

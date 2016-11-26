@@ -180,7 +180,21 @@
             turn(playerO, [1, 1], "");
             turn(playerX, [2, 1], "");
             turn(playerO, [2, 0], "O");
-        })
+        });
+
+        it("is stopped when somebody has won", function () {
+            turn(playerX, [0, 2], "");
+            turn(playerO, [0, 0], "");
+            turn(playerX, [1, 1], "");
+            turn(playerO, [2, 1], "");
+            turn(playerX, [2, 0], "X");
+
+            expect(function () {
+                turn(playerO, [1, 0], "X");
+            }).toThrow(new Error("The game is over! You can't make a turn."));
+        });
+
+
 
         function turn(player, turn, expectedWinner) {
             player.futureTurn = turn;

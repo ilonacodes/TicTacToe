@@ -8,6 +8,9 @@
 </head>
 <body>
 <div id="main-container" class="container">
+    <div id="player_won_alert" class="alert alert-success text-center hidden">You won!</div>
+    <div id="computer_won_alert" class="alert alert-danger text-center hidden">You lost!</div>
+
     <div>
         <h1><b>Tic Tac Toe</b></h1>
     </div>
@@ -40,6 +43,10 @@
 <script src="lib/jquery-3.1.1.min.js"></script>
 <script src="src/Game.js"></script>
 <script src="src/Main.js"></script>
+
+<script>
+    var main = new Main;
+</script>
 
 </body>
 </html>
